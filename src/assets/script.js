@@ -1,8 +1,8 @@
-window.onload = function() {
+window.onload = function () {
     // 📌 Configuración del Canvas
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
-    const rows = 50, cols = 50;
+    const rows = 50, cols = 100;
     const cellSize = 10;
     canvas.width = cols * cellSize;
     canvas.height = rows * cellSize;
@@ -16,16 +16,22 @@ window.onload = function() {
     let drawState = null; // Estado de la celda al hacer clic (1 o 0)
     let wasRunning = false; // Indica si el juego estaba corriendo antes de dibujar
     let generationCount = 0; // Contador de generaciones
+    let aliveCount = 0; //Contador de celdas vivas
 
     // 📌 Referencias a los botones
     const toggleGameButton = document.getElementById("toggleGame");
 
     // 🎨 Dibuja la cuadrícula en el Canvas
     function drawGrid() {
+        // Leemos el valor actual de los colores
+        const aliveColor = document.getElementById("celdaVivaColor").value;
+        const deadColor = document.getElementById("celdaMuertaColor").value;
+
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+
         for (let y = 0; y < rows; y++) {
             for (let x = 0; x < cols; x++) {
-                ctx.fillStyle = grid[y][x] === 1 ? "black" : "white"; // Celda viva (negra) o muerta (blanca)
+                ctx.fillStyle = grid[y][x] === 1 ? aliveColor : deadColor; // Celda viva (negra) o muerta (blanca)
                 ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
                 ctx.strokeStyle = "gray";
                 ctx.strokeRect(x * cellSize, y * cellSize, cellSize, cellSize);
@@ -66,8 +72,12 @@ window.onload = function() {
 
     // ⏳ Ejecuta la actualización del juego en cada iteración
     function update() {
-        getNextGeneration();
-        drawGrid();
+        getNextGeneration(); // Calcula la siguiente generación
+        drawGrid(); // Dibuja la cuadrícula
+
+        // Actualiza el contador de celdas vivas
+        const aliveCount = countAliveCells(); // Llama a la función que cuenta las celdas vivas
+        document.getElementById("aliveCounter").innerText = aliveCount; // Muestra el contador de celdas vivas en la interfaz
     }
 
     // ▶️⏸️ Función para alternar entre "Iniciar" y "Pausar"
@@ -119,7 +129,7 @@ window.onload = function() {
     function addRandomCells() {
         for (let y = 0; y < rows; y++) {
             for (let x = 0; x < cols; x++) {
-                if (grid[y][x] === 0 && Math.random() > 0.9) { 
+                if (grid[y][x] === 0 && Math.random() > 0.9) {
                     grid[y][x] = 1; // Solo añade células en los espacios vacíos
                 }
             }
@@ -138,6 +148,20 @@ window.onload = function() {
         }
     }
 
+    // 🧮 Función para contar las celdas vivas
+    function countAliveCells() {
+        let aliveCount = 0;
+        for (let y = 0; y < rows; y++) {
+            for (let x = 0; x < cols; x++) {
+                if (grid[y][x] === 1) {
+                    aliveCount++; // Incrementa el contador si la celda está viva
+                }
+            }
+        }
+        return aliveCount; // Devuelve el número total de celdas vivas
+    }
+
+
     // 📌 Event Listeners para los botones principales
     toggleGameButton.addEventListener("click", toggleGame);
     document.getElementById("resetBtn").addEventListener("click", resetGame);
@@ -151,7 +175,7 @@ window.onload = function() {
     document.getElementById("maxSpeed").addEventListener("click", () => changeSpeed(500));
 
     // 🎨 🖱️ Dibujo interactivo en el Canvas
-    canvas.addEventListener("mousedown", function(event) {
+    canvas.addEventListener("mousedown", function (event) {
         if (running) {
             wasRunning = true;
             toggleGame(); // Pausa el juego automáticamente
@@ -169,7 +193,7 @@ window.onload = function() {
         drawGrid();
     });
 
-    canvas.addEventListener("mousemove", function(event) {
+    canvas.addEventListener("mousemove", function (event) {
         if (!isDrawing) return;
         const rect = canvas.getBoundingClientRect();
         const x = Math.floor((event.clientX - rect.left) / cellSize);
@@ -179,7 +203,7 @@ window.onload = function() {
         drawGrid();
     });
 
-    canvas.addEventListener("mouseup", function() {
+    canvas.addEventListener("mouseup", function () {
         isDrawing = false;
         if (wasRunning) {
             toggleGame();
