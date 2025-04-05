@@ -223,7 +223,6 @@ window.onload = function () {
         }
     }
 
-
     // 🔄 Avanzar una generación
     function nextGeneration() {
         // Si ya tenemos generaciones futuras en el historial
@@ -251,6 +250,65 @@ window.onload = function () {
         }
     }
 
+    // 📌 Exporta el estado del canvas a un archivo JSON
+    function exportCanvas() {
+        const data = {
+            grid: grid, // El estado actual de la cuadrícula
+            generationCount: generationCount, // Contador de generaciones
+            aliveCount: countAliveCells() // Número de celdas vivas
+        };
+
+        // Solicitar al usuario el nombre del archivo
+        const fileName = prompt("¿Cómo quieres nombrar el archivo?", "conway_grid.json");
+
+        // Si el usuario no introduce un nombre, usamos un valor por defecto
+        const name = fileName ? fileName : "conway_grid.json";
+
+        // Crear un objeto Blob con el contenido de los datos
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+
+        // Crear un enlace para descargar el archivo
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = name; // Usar el nombre proporcionado por el usuario
+        link.click(); // Descargar el archivo
+    }
+
+    // 📌 Función para importar el archivo de datos JSON
+    function importCanvas(event) {
+        const file = event.target.files[0]; // Obtener el archivo seleccionado
+
+        if (!file) return;
+
+        const reader = new FileReader();
+
+        // Leer el contenido del archivo como texto
+        reader.onload = function (e) {
+            const data = JSON.parse(e.target.result); // Convertir el JSON a un objeto
+
+            // Establecer el estado de la cuadrícula, el contador de generaciones y el número de celdas vivas
+            grid = data.grid;
+            generationCount = data.generationCount;
+            const aliveCount = data.aliveCount; // Celdas vivas recuperadas del archivo
+
+            // Actualizar la interfaz con los nuevos valores
+            document.getElementById("generationCounter").innerText = generationCount;
+            document.getElementById("aliveCounter").innerText = aliveCount;
+
+            drawGrid(); // Redibujar el canvas con los nuevos datos
+        };
+
+        reader.readAsText(file); // Leer el archivo como texto
+    }
+
+    // 📌 Función para abrir el explorador de archivos al hacer clic en el botón Importar
+    document.getElementById('importBtn').addEventListener('click', function () {
+        document.getElementById('importFile').click(); // Disparar el clic en el input de archivo
+    });
+
+    // 📌 Event Listener para los botones de exportación e importación
+    document.getElementById('exportBtn').addEventListener('click', exportCanvas);
+    document.getElementById('importFile').addEventListener('change', importCanvas);
 
     // 📌 Event Listeners para los botones principales
     toggleGameButton.addEventListener("click", toggleGame);

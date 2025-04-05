@@ -37,13 +37,18 @@ function Conway() {
             </div>
           </div>
         </div>
-        <div class="contadores">
+        <div className="contadores">
           <h3>
             Generaciones: <span id="generationCounter">0</span>
           </h3>
           <h3>
             Celdas Vivas: <span id="aliveCounter">0</span>
           </h3>
+        </div>
+        <div className="export-import-controls">
+          <button id="exportBtn">Exportar</button>
+          <input type="file" id="importFile" style={{ display: 'none' }} />
+          <button id="importBtn">Importar</button>
         </div>
       </div>
     </>
