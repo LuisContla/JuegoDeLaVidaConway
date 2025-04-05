@@ -26,6 +26,10 @@ window.onload = function () {
     // 📌 Referencias a los botones
     const toggleGameButton = document.getElementById("toggleGame");
 
+    // 📌 Referencias a los inputs de color
+    const celdaVivaColorInput = document.getElementById("celdaVivaColor");
+    const celdaMuertaColorInput = document.getElementById("celdaMuertaColor");
+
     // 🎨 Dibuja la cuadrícula en el Canvas
     function drawGrid() {
         // Leemos el valor actual de los colores
@@ -42,6 +46,15 @@ window.onload = function () {
                 ctx.strokeRect(x * cellSize, y * cellSize, cellSize, cellSize);
             }
         }
+    }
+
+    // 🎨 Función para actualizar los colores de las celdas inmediatamente
+    function updateCellColors() {
+        const aliveColor = celdaVivaColorInput.value;  // Color de las celdas vivas
+        const deadColor = celdaMuertaColorInput.value; // Color de las celdas muertas
+
+        // Vuelve a dibujar la cuadrícula con los nuevos colores
+        drawGrid(aliveColor, deadColor);
     }
 
     // 🔄 Calcula la siguiente generación basada en las reglas del Juego de la Vida
@@ -131,6 +144,10 @@ window.onload = function () {
         generationCount = 0; // Reiniciar el contador de generaciones
         document.getElementById("generationCounter").innerText = generationCount;
         drawGrid();
+
+        // Actualizamos el contador de celdas vivas
+        const aliveCount = countAliveCells();
+        document.getElementById("aliveCounter").innerText = aliveCount; // Muestra el contador de celdas vivas
     }
 
     // 🎲 Añade nuevas células vivas sin afectar las ya existentes, y pausa el juego
@@ -143,6 +160,10 @@ window.onload = function () {
             }
         }
         drawGrid();
+
+        // Actualizamos el contador de celdas vivas
+        const aliveCount = countAliveCells();
+        document.getElementById("aliveCounter").innerText = aliveCount; // Muestra el contador de celdas vivas
     }
 
     // ⚡ Cambia la velocidad asegurando que esté entre 50 y 500 ms
@@ -186,7 +207,7 @@ window.onload = function () {
         }
     }
 
-    // Función para retroceder una generación
+    // 🔄 Retroceder una generación
     function previousGeneration() {
         if (historyIndex > 0) {
             historyIndex--;
@@ -194,26 +215,42 @@ window.onload = function () {
             generationCount--;
             document.getElementById("generationCounter").innerText = generationCount;
             drawGrid();
-            stopGame(); // Pausa el juego al avanzar
+
+            // Actualizamos el contador de celdas vivas
+            const aliveCount = countAliveCells();
+            document.getElementById("aliveCounter").innerText = aliveCount; // Muestra el contador de celdas vivas
+            stopGame(); // Pausa el juego al retroceder
         }
     }
 
+
     // 🔄 Avanzar una generación
     function nextGeneration() {
-        // Si estamos dentro de los límites del historial (existe una siguiente generación)
+        // Si ya tenemos generaciones futuras en el historial
         if (historyIndex < history.length - 1) {
             historyIndex++;
             grid = JSON.parse(JSON.stringify(history[historyIndex])); // Restauramos el estado de la siguiente generación
             generationCount++;
             document.getElementById("generationCounter").innerText = generationCount;
             drawGrid();
+
+            // Actualizamos el contador de celdas vivas
+            const aliveCount = countAliveCells();
+            document.getElementById("aliveCounter").innerText = aliveCount; // Muestra el contador de celdas vivas
+            stopGame(); // Pausa el juego al avanzar
         } else {
-            // Si no hay más generaciones futuras en el historial, calculamos la siguiente generación
-            getNextGeneration(); // Calculamos la siguiente generación
-            saveToHistory(); // Guardamos el estado en el historial
-            drawGrid(); // Dibuja la cuadrícula con la nueva generación
+            // Si no hay generaciones futuras, calculamos una nueva
+            getNextGeneration();
+            saveToHistory();
+            drawGrid();
+
+            // Actualizamos el contador de celdas vivas
+            const aliveCount = countAliveCells();
+            document.getElementById("aliveCounter").innerText = aliveCount; // Muestra el contador de celdas vivas
+            stopGame(); // Pausa el juego al avanzar
         }
     }
+
 
     // 📌 Event Listeners para los botones principales
     toggleGameButton.addEventListener("click", toggleGame);
@@ -225,12 +262,15 @@ window.onload = function () {
     document.getElementById("previousGenerationBtn").addEventListener("click", previousGeneration);
     document.getElementById("nextGenerationBtn").addEventListener("click", nextGeneration);
 
-
     // 📌 Event Listeners para los botones de velocidad
     document.getElementById("increaseSpeed").addEventListener("click", () => changeSpeed(speed + 50));
     document.getElementById("decreaseSpeed").addEventListener("click", () => changeSpeed(speed - 50));
     document.getElementById("minSpeed").addEventListener("click", () => changeSpeed(50));
     document.getElementById("maxSpeed").addEventListener("click", () => changeSpeed(500));
+
+    // 📌 Event listeners para los inputs de color
+    celdaVivaColorInput.addEventListener("input", updateCellColors);
+    celdaMuertaColorInput.addEventListener("input", updateCellColors);
 
     // 🎨 🖱️ Dibujo interactivo en el Canvas
     canvas.addEventListener("mousedown", function (event) {
@@ -249,6 +289,10 @@ window.onload = function () {
         drawState = grid[y][x] === 1 ? 0 : 1;
         grid[y][x] = drawState;
         drawGrid();
+
+        // Actualizamos el contador de celdas vivas
+        const aliveCount = countAliveCells();
+        document.getElementById("aliveCounter").innerText = aliveCount; // Muestra el contador de celdas vivas
     });
 
     canvas.addEventListener("mousemove", function (event) {
@@ -259,6 +303,10 @@ window.onload = function () {
 
         grid[y][x] = drawState;
         drawGrid();
+
+        // Actualizamos el contador de celdas vivas
+        const aliveCount = countAliveCells();
+        document.getElementById("aliveCounter").innerText = aliveCount; // Muestra el contador de celdas vivas
     });
 
     canvas.addEventListener("mouseup", function () {
