@@ -8,9 +8,7 @@ function Conway() {
           <h1>Juego de la Vida de Conway</h1>
         </div>
         <div className="juego-conway">
-          <div id="canvasContainer" style="overflow: auto; width: 100%; height: 500px;">
-            <canvas id="gameCanvas"></canvas>
-          </div>
+          <canvas id="gameCanvas" />
           <br /><br />
         </div>
         <div className="botones">
