@@ -8,15 +8,19 @@ function Conway() {
           <h1>Juego de la Vida de Conway</h1>
         </div>
         <div className="juego-conway">
-          <canvas id="gameCanvas" />
+          <div id="canvasContainer" style="overflow: auto; width: 100%; height: 500px;">
+            <canvas id="gameCanvas"></canvas>
+          </div>
           <br /><br />
         </div>
         <div className="botones">
-          <div className="botones-control">
+          <div class="botones-control">
             <button id="generateRandomBtn">Generar Aleatorio</button>
             <button id="addRandomBtn">Añadir Aleatorios</button>
             <button id="toggleGame">Iniciar</button>
             <button id="resetBtn">Reiniciar</button>
+            <button id="previousGenerationBtn">Retroceder Generación</button>
+            <button id="nextGenerationBtn">Avanzar Generación</button>
           </div>
           <div className="botones-personalizados">
             <div className="botones-personalizados-velocidad">

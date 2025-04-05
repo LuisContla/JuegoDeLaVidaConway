@@ -17,6 +17,11 @@ window.onload = function () {
     let wasRunning = false; // Indica si el juego estaba corriendo antes de dibujar
     let generationCount = 0; // Contador de generaciones
     let aliveCount = 0; //Contador de celdas vivas
+    let maxGenerations = 10; // Definir el máximo de generaciones a guardar en el historia
+
+    // 📌 Variables para el historial de generaciones
+    let history = []; // Historial de generaciones
+    let historyIndex = -1; // Índice de la generación actual en el historial
 
     // 📌 Referencias a los botones
     const toggleGameButton = document.getElementById("toggleGame");
@@ -73,6 +78,7 @@ window.onload = function () {
     // ⏳ Ejecuta la actualización del juego en cada iteración
     function update() {
         getNextGeneration(); // Calcula la siguiente generación
+        saveToHistory(); // Guardamos el estado de la generación en el historial
         drawGrid(); // Dibuja la cuadrícula
 
         // Actualiza el contador de celdas vivas
@@ -105,7 +111,9 @@ window.onload = function () {
         stopGame();
         grid = Array.from({ length: rows }, () => Array(cols).fill(0));
         generationCount = 0;
+        aliveCount = 0;
         document.getElementById("generationCounter").innerText = generationCount;
+        document.getElementById("aliveCounter").innerText = aliveCount;
         drawGrid();
     }
 
@@ -161,12 +169,62 @@ window.onload = function () {
         return aliveCount; // Devuelve el número total de celdas vivas
     }
 
+    // Función para guardar el estado de la generación en el historial
+    function saveToHistory() {
+        if (historyIndex < history.length - 1) {
+            // Si estamos en medio del historial, eliminamos las generaciones "futuras"
+            history = history.slice(0, historyIndex + 1);
+        }
+
+        history.push(JSON.parse(JSON.stringify(grid))); // Guardamos una copia profunda de la cuadrícula
+        historyIndex++;
+
+        // Limitar el historial a las últimas 10 generaciones
+        if (history.length > maxGenerations) {
+            history.shift(); // Elimina la generación más antigua (el primer elemento del array)
+            historyIndex--; // Reducimos el índice para reflejar el cambio
+        }
+    }
+
+    // Función para retroceder una generación
+    function previousGeneration() {
+        if (historyIndex > 0) {
+            historyIndex--;
+            grid = JSON.parse(JSON.stringify(history[historyIndex])); // Restauramos el estado de la generación anterior
+            generationCount--;
+            document.getElementById("generationCounter").innerText = generationCount;
+            drawGrid();
+            stopGame(); // Pausa el juego al avanzar
+        }
+    }
+
+    // 🔄 Avanzar una generación
+    function nextGeneration() {
+        // Si estamos dentro de los límites del historial (existe una siguiente generación)
+        if (historyIndex < history.length - 1) {
+            historyIndex++;
+            grid = JSON.parse(JSON.stringify(history[historyIndex])); // Restauramos el estado de la siguiente generación
+            generationCount++;
+            document.getElementById("generationCounter").innerText = generationCount;
+            drawGrid();
+        } else {
+            // Si no hay más generaciones futuras en el historial, calculamos la siguiente generación
+            getNextGeneration(); // Calculamos la siguiente generación
+            saveToHistory(); // Guardamos el estado en el historial
+            drawGrid(); // Dibuja la cuadrícula con la nueva generación
+        }
+    }
 
     // 📌 Event Listeners para los botones principales
     toggleGameButton.addEventListener("click", toggleGame);
     document.getElementById("resetBtn").addEventListener("click", resetGame);
     document.getElementById("generateRandomBtn").addEventListener("click", generateRandomGrid);
     document.getElementById("addRandomBtn").addEventListener("click", addRandomCells);
+
+    // 📌 Event Listeners para los botones de retroceder y avanzar generaciones
+    document.getElementById("previousGenerationBtn").addEventListener("click", previousGeneration);
+    document.getElementById("nextGenerationBtn").addEventListener("click", nextGeneration);
+
 
     // 📌 Event Listeners para los botones de velocidad
     document.getElementById("increaseSpeed").addEventListener("click", () => changeSpeed(speed + 50));
