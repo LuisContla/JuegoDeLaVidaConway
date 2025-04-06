@@ -17,6 +17,7 @@ window.onload = function () {
     let wasRunning = false; // Indica si el juego estaba corriendo antes de dibujar
     let generationCount = 0; // Contador de generaciones
     let aliveCount = 0; //Contador de celdas vivas
+    let totalAliveCells = 0; // Variable para almacenar la suma total de celdas vivas
     let maxGenerations = 10; // Definir el máximo de generaciones a guardar en el historia
 
     // 📌 Variables para el historial de generaciones
@@ -85,7 +86,9 @@ window.onload = function () {
 
         grid = newGrid;
         generationCount++; // Incrementa el contador de generaciones
+
         document.getElementById("generationCounter").innerText = generationCount; // Actualiza la interfaz
+
     }
 
     // ⏳ Ejecuta la actualización del juego en cada iteración
@@ -94,9 +97,11 @@ window.onload = function () {
         saveToHistory(); // Guardamos el estado de la generación en el historial
         drawGrid(); // Dibuja la cuadrícula
 
+
         // Actualiza el contador de celdas vivas
         const aliveCount = countAliveCells(); // Llama a la función que cuenta las celdas vivas
         document.getElementById("aliveCounter").innerText = aliveCount; // Muestra el contador de celdas vivas en la interfaz
+        updateStatistics(aliveCount);
     }
 
     // ▶️⏸️ Función para alternar entre "Iniciar" y "Pausar"
@@ -118,15 +123,23 @@ window.onload = function () {
         clearInterval(intervalId);
         toggleGameButton.innerText = "Iniciar";
     }
-
+  
     // 🔄 Reinicia el juego y el contador de generaciones
     function resetGame() {
         stopGame();
         grid = Array.from({ length: rows }, () => Array(cols).fill(0));
         generationCount = 0;
         aliveCount = 0;
+        totalAliveCells = 0;
+        history = []; // Limpiamos el historial
+        historyIndex = -1; // Restablecemos el índice del historial
         document.getElementById("generationCounter").innerText = generationCount;
         document.getElementById("aliveCounter").innerText = aliveCount;
+        document.getElementById("populationDensity").innerText = 0;
+        document.getElementById("meanAliveCells").innerText = 0;
+        document.getElementById("variance").innerText = 0;
+        document.getElementById("logBase10").innerText = 0;
+        document.getElementById("totalAliveCells").innerText = 0;
         drawGrid();
     }
 
@@ -142,12 +155,14 @@ window.onload = function () {
         }
 
         generationCount = 0; // Reiniciar el contador de generaciones
+        totalAliveCells = 0;
         document.getElementById("generationCounter").innerText = generationCount;
         drawGrid();
 
         // Actualizamos el contador de celdas vivas
         const aliveCount = countAliveCells();
         document.getElementById("aliveCounter").innerText = aliveCount; // Muestra el contador de celdas vivas
+        updateStatistics(aliveCount);
     }
 
     // 🎲 Añade nuevas células vivas sin afectar las ya existentes, y pausa el juego
@@ -164,6 +179,7 @@ window.onload = function () {
         // Actualizamos el contador de celdas vivas
         const aliveCount = countAliveCells();
         document.getElementById("aliveCounter").innerText = aliveCount; // Muestra el contador de celdas vivas
+        updateStatistics(aliveCount);
     }
 
     // ⚡ Cambia la velocidad asegurando que esté entre 50 y 500 ms
@@ -187,6 +203,7 @@ window.onload = function () {
                 }
             }
         }
+
         return aliveCount; // Devuelve el número total de celdas vivas
     }
 
@@ -197,8 +214,14 @@ window.onload = function () {
             history = history.slice(0, historyIndex + 1);
         }
 
-        history.push(JSON.parse(JSON.stringify(grid))); // Guardamos una copia profunda de la cuadrícula
-        historyIndex++;
+        // Guardamos el estado completo (cuadrícula, generaciones y totalAliveCells)
+        history.push({
+            grid: JSON.parse(JSON.stringify(grid)),
+            generationCount: generationCount,
+            totalAliveCells: totalAliveCells
+        });
+
+        historyIndex++; // Incrementamos el índice del historial
 
         // Limitar el historial a las últimas 10 generaciones
         if (history.length > maxGenerations) {
@@ -210,32 +233,41 @@ window.onload = function () {
     // 🔄 Retroceder una generación
     function previousGeneration() {
         if (historyIndex > 0) {
-            historyIndex--;
-            grid = JSON.parse(JSON.stringify(history[historyIndex])); // Restauramos el estado de la generación anterior
-            generationCount--;
-            document.getElementById("generationCounter").innerText = generationCount;
-            drawGrid();
+            historyIndex--; // Retrocedemos en el historial
+            const previousState = history[historyIndex]; // Obtenemos el estado anterior
 
-            // Actualizamos el contador de celdas vivas
-            const aliveCount = countAliveCells();
-            document.getElementById("aliveCounter").innerText = aliveCount; // Muestra el contador de celdas vivas
+            // Restauramos la cuadrícula, las generaciones y el totalAliveCells
+            grid = JSON.parse(JSON.stringify(previousState.grid));
+            generationCount = previousState.generationCount;
+            totalAliveCells = previousState.totalAliveCells; // Restauramos el total de celdas vivas
+
+            document.getElementById("generationCounter").innerText = generationCount;
+            document.getElementById("aliveCounter").innerText = countAliveCells(); // Calculamos de nuevo las celdas vivas
+            drawGrid(); // Redibujamos el canvas
+
+            // Actualizamos las estadísticas
+            updateStatistics();
             stopGame(); // Pausa el juego al retroceder
         }
     }
 
     // 🔄 Avanzar una generación
     function nextGeneration() {
-        // Si ya tenemos generaciones futuras en el historial
         if (historyIndex < history.length - 1) {
-            historyIndex++;
-            grid = JSON.parse(JSON.stringify(history[historyIndex])); // Restauramos el estado de la siguiente generación
-            generationCount++;
-            document.getElementById("generationCounter").innerText = generationCount;
-            drawGrid();
+            historyIndex++; // Avanzamos en el historial
+            const nextState = history[historyIndex]; // Obtenemos el siguiente estado
 
-            // Actualizamos el contador de celdas vivas
-            const aliveCount = countAliveCells();
-            document.getElementById("aliveCounter").innerText = aliveCount; // Muestra el contador de celdas vivas
+            // Restauramos la cuadrícula, las generaciones y el totalAliveCells
+            grid = JSON.parse(JSON.stringify(nextState.grid));
+            generationCount = nextState.generationCount;
+            totalAliveCells = nextState.totalAliveCells; // Restauramos el total de celdas vivas
+
+            document.getElementById("generationCounter").innerText = generationCount;
+            document.getElementById("aliveCounter").innerText = countAliveCells(); // Calculamos de nuevo las celdas vivas
+            drawGrid(); // Redibujamos el canvas
+
+            // Actualizamos las estadísticas
+            updateStatistics();
             stopGame(); // Pausa el juego al avanzar
         } else {
             // Si no hay generaciones futuras, calculamos una nueva
@@ -245,7 +277,8 @@ window.onload = function () {
 
             // Actualizamos el contador de celdas vivas
             const aliveCount = countAliveCells();
-            document.getElementById("aliveCounter").innerText = aliveCount; // Muestra el contador de celdas vivas
+            document.getElementById("aliveCounter").innerText = aliveCount;
+            updateStatistics();
             stopGame(); // Pausa el juego al avanzar
         }
     }
@@ -305,6 +338,43 @@ window.onload = function () {
     document.getElementById('importBtn').addEventListener('click', function () {
         document.getElementById('importFile').click(); // Disparar el clic en el input de archivo
     });
+
+    // 📌 Función para calcular la densidad poblacional
+    function calculatePopulationDensity(aliveCount) {
+        const totalCells = rows * cols;
+        return (aliveCount / totalCells);
+    }
+
+    // 📌 Función para calcular el logaritmo base 10 del número de celdas vivas
+    function calculateLogBase10(aliveCount) {
+        if (aliveCount === 0) return 0;
+        return Math.log10(aliveCount); // Retorna 0 si aliveCount es 0
+    }
+
+    // 📌 Función para calcular la media de celdas vivas
+    function calculateMeanAliveCells() {
+        if (generationCount === 0) return 0;
+        return totalAliveCells / generationCount;
+    }
+
+    // 📌 Función para calcular la varianza
+    function calculateVariance(aliveCount) {
+        const mean = calculateMeanAliveCells();
+        const squaredDifferences = generationCount.map(count => Math.pow(count - mean, 2));
+        const variance = squaredDifferences.reduce((acc, diff) => acc + diff, 0) / squaredDifferences.length;
+        return variance;
+    }
+
+    // 📌 Función para mostrar las estadísticas actualizadas en la interfaz
+    function updateStatistics() {
+        const aliveCount = countAliveCells();
+        totalAliveCells += aliveCount;
+        document.getElementById("populationDensity").innerText = calculatePopulationDensity(aliveCount).toFixed(4);
+        document.getElementById("logBase10").innerText = calculateLogBase10(aliveCount).toFixed(4);
+        document.getElementById("totalAliveCells").innerText = totalAliveCells; // Muestra el total acumulado de celdas vivas
+        document.getElementById("meanAliveCells").innerText = calculateMeanAliveCells().toFixed(4);
+        document.getElementById("variance").innerText = calculateVariance().toFixed(4);
+    }
 
     // 📌 Event Listener para los botones de exportación e importación
     document.getElementById('exportBtn').addEventListener('click', exportCanvas);

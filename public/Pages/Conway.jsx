@@ -12,7 +12,7 @@ function Conway() {
           <br /><br />
         </div>
         <div className="botones">
-          <div class="botones-control">
+          <div className="botones-control">
             <button id="generateRandomBtn">Generar Aleatorio</button>
             <button id="addRandomBtn">Añadir Aleatorios</button>
             <button id="toggleGame">Iniciar</button>
@@ -38,12 +38,13 @@ function Conway() {
           </div>
         </div>
         <div className="contadores">
-          <h3>
-            Generaciones: <span id="generationCounter">0</span>
-          </h3>
-          <h3>
-            Celdas Vivas: <span id="aliveCounter">0</span>
-          </h3>
+          <h3>Generaciones:<br /><span id="generationCounter">0</span></h3>
+          <h3>Celdas Vivas:<br /><span id="aliveCounter">0</span></h3>
+          <h3>Densidad Poblacional:<br /><span id="populationDensity">0</span></h3>
+          <h3>Logaritmo Base 10:<br /><span id="logBase10">0</span></h3>
+          <h3> Media de Celdas Vivas:<br /><span id="meanAliveCells">0</span></h3>
+          <h3>Varianza:<br /><span id="variance">0</span></h3>
+          <h3>Total de Celdas Vivas:<br /><span id="totalAliveCells">0</span></h3>
         </div>
         <div className="export-import-controls">
           <button id="exportBtn">Exportar</button>
