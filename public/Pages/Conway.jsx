@@ -19,23 +19,32 @@ function Conway() {
             <button id="resetBtn">Reiniciar</button>
             <button id="previousGenerationBtn">Retroceder Generación</button>
             <button id="nextGenerationBtn">Avanzar Generación</button>
+            <label htmlFor="toroidalToggle">Toroidal:</label>
+            <label className="switch">
+              <input type="checkbox" />
+              <span className="slider round" />
+            </label>
           </div>
-          <div className="botones-personalizados">
-            <div className="botones-personalizados-velocidad">
-              <label htmlFor="speedInput">Velocidad (ms): </label>
-              <button id="minSpeed">min</button>
-              <button id="decreaseSpeed">−</button>
-              <input type="number" id="speedInput" defaultValue={50} min={50} step={50} readOnly />
-              <button id="increaseSpeed">+</button>
-              <button id="maxSpeed">máx</button>
-            </div>
-            <div className="botones-personalizados-colores">
-              <label htmlFor="celdaVivaColor">Celdas Vivas:</label>
-              <input type="color" id="celdaVivaColor" name="celdaVivaColor" defaultValue="#000000" />
-              <label htmlFor="celdaViva">Celdas Muertas:</label>
-              <input type="color" id="celdaMuertaColor" name="celdaMuertaColor" defaultValue="#FFFFFF" />
-            </div>
+          <div className="botones-velocidad">
+            <label htmlFor="speedInput">Velocidad (ms): </label>
+            <button id="minSpeed">min</button>
+            <button id="decreaseSpeed">−</button>
+            <input type="number" id="speedInput" defaultValue={50} min={50} step={50} readOnly />
+            <button id="increaseSpeed">+</button>
+            <button id="maxSpeed">máx</button>
           </div>
+          <div className="botones-colores">
+            <label htmlFor="celdaVivaColor">Celdas Vivas:</label>
+            <input type="color" id="celdaVivaColor" name="celdaVivaColor" defaultValue="#000000" />
+            <label htmlFor="celdaViva">Celdas Muertas:</label>
+            <input type="color" id="celdaMuertaColor" name="celdaMuertaColor" defaultValue="#FFFFFF" />
+          </div>
+        </div>
+        <div className="inputs-reglas">
+          <label htmlFor="ruleB">B</label>
+          <input type="number" />
+          <label htmlFor="ruleS">/S</label>
+          <input type="number" name="" id="" />
         </div>
         <div className="contadores">
           <h3>Generaciones:<br /><span id="generationCounter">0</span></h3>
