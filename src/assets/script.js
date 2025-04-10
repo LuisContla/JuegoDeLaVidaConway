@@ -24,6 +24,8 @@ window.onload = function () {
     let maxGenerations = 10; // Definir el máximo de generaciones a guardar en el historia
     let history = []; // Historial de generaciones
     let historyIndex = -1; // Índice de la generación actual en el historial
+    let isToroidal = false; // Variable para verificar si el modo toroidal está activado
+
 
     // ---------- REFERENCIAS A BOTONES E INPUTS ---------- 
 
@@ -144,26 +146,69 @@ window.onload = function () {
                 for (let i = -1; i <= 1; i++) {
                     for (let j = -1; j <= 1; j++) {
                         if (i === 0 && j === 0) continue; // Ignora la propia celda
-                        let ny = y + i, nx = x + j;
 
-                        if (ny >= 0 && ny < rows && nx >= 0 && nx < cols) {
-                            neighbors += grid[ny][nx]; // Suma los vecinos vivos
+                        let nx = x + i;
+                        let ny = y + j;
+
+                        // Si el modo toroidal está activado, usamos el módulo para envolver las coordenadas
+                        if (isToroidal) {
+                            nx = (nx + cols) % cols;  // Para las columnas, nos aseguramos de que nx esté dentro del rango
+                            ny = (ny + rows) % rows;  // Para las filas, nos aseguramos de que ny esté dentro del rango
+                        }
+
+                        // Verificamos que las nuevas coordenadas estén dentro del tablero
+                        if (nx >= 0 && nx < cols && ny >= 0 && ny < rows) {
+                            neighbors += grid[ny][nx]; // Contamos el vecino si está vivo
                         }
                     }
                 }
 
                 // Aplica las reglas del Juego de la Vida
-                if (grid[y][x] === 1 && (neighbors < 2 || neighbors > 3)) newGrid[y][x] = 0; // Muerte por sobrepoblación o aislamiento
-                if (grid[y][x] === 0 && neighbors === 3) newGrid[y][x] = 1; // Nace una nueva célula
+                if (grid[y][x] === 1 && (neighbors < 2 || neighbors > 3)) {
+                    newGrid[y][x] = 0; // Muerte por sobrepoblación o aislamiento
+                }
+                if (grid[y][x] === 0 && neighbors === 3) {
+                    newGrid[y][x] = 1; // Nace una nueva célula
+                }
             }
         }
 
-        grid = newGrid;
+        grid = newGrid; // Actualiza la cuadrícula
         generationCount++; // Incrementa el contador de generaciones
 
-        document.getElementById("generationCounter").innerText = generationCount; // Actualiza la interfaz
+        aliveCount = countAliveCells(); // Calcula el número de celdas vivas
+        totalAliveCells += aliveCount; // Acumula el total de celdas vivas
 
+        document.getElementById("generationCounter").innerText = generationCount; // Actualiza la interfaz
+        document.getElementById("aliveCounter").innerText = aliveCount; // Actualiza el contador de celdas vivas
+        drawGrid(); // Dibuja la cuadrícula actualizada
+
+        // Guardamos el estado de la generación en el historial
+        saveToHistory(); // Guardamos el estado del juego en el historial
+        updateStatistics(); // Actualiza las estadísticas
     }
+
+    // Evento para el toggle del modo toroidal
+    document.querySelector("input[type='checkbox']").addEventListener("change", function () {
+        // Pausamos el juego cuando se cambia el estado del toggle
+        // if (running) {
+        //     stopGame();
+        // }
+
+        // Activamos o desactivamos el modo toroidal
+        isToroidal = this.checked;
+
+        // Actualizamos el borde del canvas dependiendo del estado del modo toroidal
+        const canvas = document.getElementById("gameCanvas");
+        if (isToroidal) {
+            canvas.style.border = "1px solid black"; // Borde de 1px cuando el modo toroidal está activado
+        } else {
+            canvas.style.border = "2px solid black"; // Borde de 3px cuando el modo toroidal está desactivado
+        }
+
+        // Mantenemos las celdas como estaban antes de cambiar el estado
+        drawGrid(); // Dibuja la cuadrícula con las celdas tal como están
+    });
 
     // Ejecuta la actualización del juego en cada iteración
     function update() {
