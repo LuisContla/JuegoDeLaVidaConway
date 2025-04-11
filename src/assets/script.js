@@ -25,13 +25,17 @@ window.onload = function () {
     let history = []; // Historial de generaciones
     let historyIndex = -1; // Índice de la generación actual en el historial
     let isToroidal = false; // Variable para verificar si el modo toroidal está activado
-
+    let ruleB = [3]; // Reglas de nacimiento, por defecto B3
+    let ruleS = [2, 3]; // Reglas de supervivencia, por defecto S23
 
     // ---------- REFERENCIAS A BOTONES E INPUTS ---------- 
 
     const toggleGameButton = document.getElementById("toggleGame");
+    const generateRandomBtn = document.getElementById("generateRandomBtn");
     const celdaVivaColorInput = document.getElementById("celdaVivaColor");
     const celdaMuertaColorInput = document.getElementById("celdaMuertaColor");
+    const ruleBInput = document.getElementById("ruleB");
+    const ruleSInput = document.getElementById("ruleS");
 
     // ---------- DIBUJO DEL CANVAS ---------- 
 
@@ -59,15 +63,21 @@ window.onload = function () {
         if (!running) {
             running = true;
             intervalId = setInterval(update, speed);
+            ruleBInput.disabled = true;
+            ruleSInput.disabled = true;
+            generateRandomBtn.disabled = true;
             toggleGameButton.innerText = "Pausar";
         } else {
             running = false;
             clearInterval(intervalId);
+            ruleBInput.disabled = false;
+            ruleSInput.disabled = false;
+            generateRandomBtn.disabled = false;
             toggleGameButton.innerText = "Iniciar";
         }
     }
 
-    //  Pausa el juego
+    // Pausa el juego
     function stopGame() {
         running = false;
         clearInterval(intervalId);
@@ -83,6 +93,11 @@ window.onload = function () {
         totalAliveCells = 0;
         history = []; // Limpiamos el historial
         historyIndex = -1; // Restablecemos el índice del historial
+        ruleB = [3]; // Reglas de nacimiento, por defecto B3
+        ruleS = [2, 3]; // Reglas de supervivencia, por defecto S23
+        generateRandomBtn.disabled = false;
+        ruleBInput.disabled = false;
+        ruleSInput.disabled = false;
         document.getElementById("generationCounter").innerText = generationCount;
         document.getElementById("aliveCounter").innerText = aliveCount;
         document.getElementById("populationDensity").innerText = 0;
@@ -90,6 +105,8 @@ window.onload = function () {
         document.getElementById("variance").innerText = 0;
         document.getElementById("logBase10").innerText = 0;
         document.getElementById("totalAliveCells").innerText = 0;
+        document.getElementById("ruleB").value = ruleB;
+        document.getElementById("ruleS").value = 23;
         drawGrid();
     }
 
@@ -152,8 +169,8 @@ window.onload = function () {
 
                         // Si el modo toroidal está activado, usamos el módulo para envolver las coordenadas
                         if (isToroidal) {
-                            nx = (nx + cols) % cols;  // Para las columnas, nos aseguramos de que nx esté dentro del rango
-                            ny = (ny + rows) % rows;  // Para las filas, nos aseguramos de que ny esté dentro del rango
+                            nx = (nx + cols) % cols;
+                            ny = (ny + rows) % rows;
                         }
 
                         // Verificamos que las nuevas coordenadas estén dentro del tablero
@@ -163,17 +180,17 @@ window.onload = function () {
                     }
                 }
 
-                // Aplica las reglas del Juego de la Vida
-                if (grid[y][x] === 1 && (neighbors < 2 || neighbors > 3)) {
-                    newGrid[y][x] = 0; // Muerte por sobrepoblación o aislamiento
+                // Aplicamos las reglas de B/S dinámicamente
+                if (grid[y][x] === 1 && !ruleS.includes(neighbors)) {
+                    newGrid[y][x] = 0; // Muerte por no estar en la regla de supervivencia
                 }
-                if (grid[y][x] === 0 && neighbors === 3) {
-                    newGrid[y][x] = 1; // Nace una nueva célula
+                if (grid[y][x] === 0 && ruleB.includes(neighbors)) {
+                    newGrid[y][x] = 1; // Nace una nueva célula según la regla de nacimiento
                 }
             }
         }
 
-        grid = newGrid; // Actualiza la cuadrícula
+        grid = newGrid;
         generationCount++; // Incrementa el contador de generaciones
 
         aliveCount = countAliveCells(); // Calcula el número de celdas vivas
@@ -195,15 +212,17 @@ window.onload = function () {
         //     stopGame();
         // }
 
+        const aliveColor = celdaVivaColorInput.value;  // Color de las celdas vivas
+        
         // Activamos o desactivamos el modo toroidal
         isToroidal = this.checked;
 
         // Actualizamos el borde del canvas dependiendo del estado del modo toroidal
         const canvas = document.getElementById("gameCanvas");
         if (isToroidal) {
-            canvas.style.border = "1px solid black"; // Borde de 1px cuando el modo toroidal está activado
+            canvas.style.border = "1px solid " + aliveColor; // Borde de 1px cuando el modo toroidal está activado
         } else {
-            canvas.style.border = "2px solid black"; // Borde de 3px cuando el modo toroidal está desactivado
+            canvas.style.border = "2px solid " + aliveColor; // Borde de 3px cuando el modo toroidal está desactivado
         }
 
         // Mantenemos las celdas como estaban antes de cambiar el estado
@@ -222,6 +241,27 @@ window.onload = function () {
         document.getElementById("aliveCounter").innerText = aliveCount; // Muestra el contador de celdas vivas en la interfaz
         updateStatistics(aliveCount);
     }
+
+    // Actualizamos las reglas B/S desde los inputs
+    function updateRules() {
+        const ruleBValue = document.getElementById("ruleB").value;
+        const ruleSValue = document.getElementById("ruleS").value;
+
+        // Convertir los valores de entrada a arrays de números
+        ruleB = ruleBValue.split("").map(Number); // Convierte B (Ejemplo: 3 -> [3])
+        ruleS = ruleSValue.split("").map(Number); // Convierte S (Ejemplo: 23 -> [2, 3])
+
+        console.log("B" + ruleB + "/S" + ruleS);
+    }
+
+    // Evento para cuando se cambian las reglas
+    document.getElementById("ruleB").addEventListener("input", function () {
+        if (!running) updateRules(); // Solo actualizamos si el juego está pausado
+    });
+
+    document.getElementById("ruleS").addEventListener("input", function () {
+        if (!running) updateRules(); // Solo actualizamos si el juego está pausado
+    });
 
     // ---------- FUNCIONALIDADES DE GENERACIONES ---------- 
 
@@ -373,6 +413,8 @@ window.onload = function () {
     function updateCellColors() {
         const aliveColor = celdaVivaColorInput.value;  // Color de las celdas vivas
         const deadColor = celdaMuertaColorInput.value; // Color de las celdas muertas
+
+        canvas.style.border = "1px solid " + aliveColor; // Borde de 1px cuando el modo toroidal está activado
 
         // Vuelve a dibujar la cuadrícula con los nuevos colores
         drawGrid(aliveColor, deadColor);

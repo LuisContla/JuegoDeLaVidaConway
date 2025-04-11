@@ -42,9 +42,9 @@ function Conway() {
         </div>
         <div className="inputs-reglas">
           <label htmlFor="ruleB">B</label>
-          <input type="number" />
+          <input type="number" id="ruleB" defaultValue={3} />
           <label htmlFor="ruleS">/S</label>
-          <input type="number" name="" id="" />
+          <input type="number" id="ruleS" defaultValue={23} />
         </div>
         <div className="contadores">
           <h3>Generaciones:<br /><span id="generationCounter">0</span></h3>
