@@ -21,7 +21,7 @@ function Conway() {
             <button id="nextGenerationBtn">Avanzar Generación</button>
             <label htmlFor="toroidalToggle">Toroidal:</label>
             <label className="switch">
-              <input type="checkbox" />
+              <input type="checkbox" id="toroidalCheck" />
               <span className="slider round" />
             </label>
           </div>

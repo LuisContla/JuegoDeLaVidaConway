@@ -36,6 +36,8 @@ window.onload = function () {
     const celdaMuertaColorInput = document.getElementById("celdaMuertaColor");
     const ruleBInput = document.getElementById("ruleB");
     const ruleSInput = document.getElementById("ruleS");
+    const exportBtn = document.getElementById("exportBtn");
+    const importBtn = document.getElementById("importBtn");
 
     // ---------- DIBUJO DEL CANVAS ---------- 
 
@@ -66,6 +68,8 @@ window.onload = function () {
             ruleBInput.disabled = true;
             ruleSInput.disabled = true;
             generateRandomBtn.disabled = true;
+            exportBtn.disabled = true;
+            importBtn.disabled = true;
             toggleGameButton.innerText = "Pausar";
         } else {
             running = false;
@@ -73,6 +77,8 @@ window.onload = function () {
             ruleBInput.disabled = false;
             ruleSInput.disabled = false;
             generateRandomBtn.disabled = false;
+            exportBtn.disabled = false;
+            importBtn.disabled = false;
             toggleGameButton.innerText = "Iniciar";
         }
     }
@@ -98,6 +104,10 @@ window.onload = function () {
         generateRandomBtn.disabled = false;
         ruleBInput.disabled = false;
         ruleSInput.disabled = false;
+        exportBtn.disabled = false;
+        importBtn.disabled = false;
+        celdaMuertaColorInput.value = "#FFFFFF";
+        celdaVivaColorInput.value = "#000000";
         document.getElementById("generationCounter").innerText = generationCount;
         document.getElementById("aliveCounter").innerText = aliveCount;
         document.getElementById("populationDensity").innerText = 0;
@@ -213,7 +223,7 @@ window.onload = function () {
         // }
 
         const aliveColor = celdaVivaColorInput.value;  // Color de las celdas vivas
-        
+
         // Activamos o desactivamos el modo toroidal
         isToroidal = this.checked;
 
@@ -427,7 +437,16 @@ window.onload = function () {
         const data = {
             grid: grid, // El estado actual de la cuadrícula
             generationCount: generationCount, // Contador de generaciones
-            aliveCount: countAliveCells() // Número de celdas vivas
+            aliveCount: countAliveCells(), // Número de celdas vivas
+            totalAliveCells: totalAliveCells,
+            isToroidal: isToroidal,
+            ruleB: ruleB, // Reglas de nacimiento
+            ruleS: ruleS, // Reglas de supervivencia
+            rows: rows, // Número de filas
+            cols: cols, // Número de columnas
+            cellSize: cellSize, // Tamaño de las celdas
+            aliveColor: celdaVivaColorInput.value, // Color de las celdas vivas
+            deadColor: celdaMuertaColorInput.value, // Color de las celdas muerta
         };
 
         // Solicitar al usuario el nombre del archivo
@@ -462,10 +481,26 @@ window.onload = function () {
             grid = data.grid;
             generationCount = data.generationCount;
             const aliveCount = data.aliveCount; // Celdas vivas recuperadas del archivo
+            totalAliveCells = data.totalAliveCells;
+            ruleB = data.ruleB;
+            ruleS = data.ruleS;
 
             // Actualizar la interfaz con los nuevos valores
             document.getElementById("generationCounter").innerText = generationCount;
             document.getElementById("aliveCounter").innerText = aliveCount;
+            document.getElementById("totalAliveCells").innerText = totalAliveCells;
+            document.getElementById("ruleB").innerText = ruleB;
+            document.getElementById("ruleS").innerText = ruleS;
+            celdaMuertaColorInput.value = data.deadColor;
+            celdaVivaColorInput.value = data.aliveColor;
+
+            // Aseguramos que el borde se actualice al estado toroidal
+            const canvas = document.getElementById("gameCanvas");
+            if (data.isToroidal) {
+                canvas.style.border = "1px solid " + data.aliveColor; // Borde de 1px cuando el modo toroidal está activado
+            } else {
+                canvas.style.border = "3px solid " + data.aliveColor; // Borde de 3px cuando el modo toroidal está desactivado
+            }
 
             drawGrid(); // Redibujar el canvas con los nuevos datos
         };

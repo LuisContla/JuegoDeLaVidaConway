@@ -5,15 +5,17 @@ Repositorio donde se guardará mi práctica para la Materia de Cellular Automata
 
 ### Interfaz y Control del Juego
 
-- ✔ Iniciar/Pausar → Un solo botón cambia entre "Iniciar" y "Pausar".
+- ✔ Iniciar/Pausar → Un solo botón cambia entre "Iniciar" y "Pausar". Se desactivan los inputs de reglas mientras el juego está corriendo.
 - ✔ Reiniciar → Borra la cuadrícula, reinicia el conteo de generaciones y pausa el juego.
 - ✔ Contador de Generaciones → Muestra cuántas generaciones han pasado en la simulación.
+- ✔ Contador de Celdas Vivas → Muestra el número total de celdas vivas en la simulación.
+- ✔ Contador de Total de Celdas Vivas → Muestra la suma total de celdas vivas a través de todas las generaciones.
 
 ### Manipulación de la Cuadrícula
 
-- ✔ Dibujar con el Mouse → Se pueden activar/desactivar células arrastrando el mouse.
-- ✔ El juego se pausa automáticamente al dibujar y se reanuda al soltar el mouse.
-- ✔ El juego NO se pausa al agregar células aleatorias.
+- ✔ Dibujar con el Mouse → Se pueden activar/desactivar celdas arrastrando el mouse.
+- ✔ El juego se pausa automáticamente al dibujar: El juego se detiene automáticamente cuando se empieza a dibujar, y se reanuda cuando se suelta el mouse.
+- ✔ El juego NO se pausa al agregar celdas aleatorias: La adición de celdas aleatorias no interrumpe la ejecución del juego.
 
 ### Generación de Patrones Aleatorios
 
@@ -22,10 +24,20 @@ Repositorio donde se guardará mi práctica para la Materia de Cellular Automata
 
 ### Control de Velocidad
 
-- ✔ Se puede aumentar o disminuir la velocidad con los botones + y - (en incrementos de 50ms).
+- ✔ Aumentar/Disminuir la velocidad → Se puede aumentar o disminuir la velocidad con los botones + y - (en incrementos de 50ms).
 - ✔ Velocidad mínima de 50ms y máxima de 500ms.
-- ✔ Botones "Velocidad Mínima" y "Velocidad Máxima" ajustan la velocidad instantáneamente.
-- ✔ Si el juego está corriendo, la velocidad cambia en tiempo real sin pausarlo.
+- ✔ Botones "Velocidad Mínima" y "Velocidad Máxima" → Ajustan la velocidad instantáneamente.
+- ✔ El cambio de velocidad se aplica sin pausar el juego → Si el juego está corriendo, la velocidad cambia en tiempo real sin necesidad de pausarlo.
+
+## Modo Toroidal
+
+- ✔ Modo Toroidal Activado/Desactivado → Cuando el modo toroidal está activado, las celdas en los bordes del canvas se comportan como si estuvieran conectadas al lado opuesto (por ejemplo, la celda (0, 49) tiene como vecino la celda (49, 49)).
+- ✔ Cambio dinámico del borde → El borde del canvas cambia a 1px cuando el modo toroidal está activado y a 3px cuando está desactivado.
+
+## Reglas B/S Personalizadas
+
+- ✔ Entrada de Reglas B/S → Los usuarios pueden personalizar las reglas B/S (por ejemplo, B3/S23 para las reglas predeterminadas) mediante inputs de número.
+- ✔ Desactivación de inputs mientras el juego está corriendo → Los inputs de reglas B/S están desactivados mientras el juego está corriendo y se activan nuevamente cuando el juego está pausado.
 
 ### Historial de Generaciones
 
@@ -54,3 +66,4 @@ Repositorio donde se guardará mi práctica para la Materia de Cellular Automata
 - 📊 Optimización → Uso eficiente de la memoria y la lógica para mantener un buen rendimiento.
 - 🗃 Historial de generaciones → Mantén un registro de las últimas generaciones y navega a través de ellas.
 - ⚙️ Personalización → Cambia los colores de las celdas vivas y muertas y ajusta la velocidad de la simulación según tus preferencias.
+- 🌐 Exportar/Importar → Permite guardar y restaurar el estado completo del juego en cualquier momento.
