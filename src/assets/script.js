@@ -4,8 +4,8 @@ window.onload = function () {
 
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
-    const rows = 500, cols = 500;
-    const cellSize = 3;
+    let rows = 500, cols = 500;
+    let cellSize = 3;
     canvas.width = cols * cellSize;
     canvas.height = rows * cellSize;
 
@@ -38,6 +38,10 @@ window.onload = function () {
     const ruleSInput = document.getElementById("ruleS");
     const exportBtn = document.getElementById("exportBtn");
     const importBtn = document.getElementById("importBtn");
+    const inputRows = document.getElementById("inputRows");
+    const inputCols = document.getElementById("inputCols");
+    const inputCellSize = document.getElementById("inputCellSize");
+    const updateSizeBtn = document.getElementById("updateSizeBtn");
 
     // ---------- DIBUJO DEL CANVAS ---------- 
 
@@ -57,6 +61,25 @@ window.onload = function () {
             }
         }
     }
+
+    // Función para actualizar el tamaño del canvas
+    function updateCanvasSize() {
+        // Obtener las nuevas dimensiones del canvas desde los inputs
+        rows = parseInt(inputRows.value);
+        cols = parseInt(inputCols.value);
+        cellSize = parseInt(inputCellSize.value);
+
+        // Actualizar las dimensiones del canvas
+        canvas.width = cols * cellSize;
+        canvas.height = rows * cellSize;
+
+        // Re-inicializar la cuadrícula
+        grid = Array.from({ length: rows }, () => Array(cols).fill(0));
+
+        // Redibujar el canvas
+        drawGrid();
+    }
+
 
     // ---------- FUNCIONALIDADES DE CONTROL ---------- 
 
@@ -517,6 +540,7 @@ window.onload = function () {
 
     // Botones
     toggleGameButton.addEventListener("click", toggleGame);
+    updateSizeBtn.addEventListener("click", updateCanvasSize);
     document.getElementById("resetBtn").addEventListener("click", resetGame);
     document.getElementById("generateRandomBtn").addEventListener("click", generateRandomGrid);
     document.getElementById("addRandomBtn").addEventListener("click", addRandomCells);

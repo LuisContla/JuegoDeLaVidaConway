@@ -7,6 +7,16 @@ function Conway() {
         <div className="titulo">
           <h1>Juego de la Vida de Conway</h1>
         </div>
+        <div className="inputs-configuracion">
+          <label htmlFor="inputRows">Filas:</label>
+          <input type="number" id="inputRows" min={50} defaultValue={50} step={50} />
+          <label htmlFor="inputCols">Columnas:</label>
+          <input type="number" id="inputCols" min={50} defaultValue={100} step={50} />
+          <label htmlFor="inputCellSize">Tamaño de las celdas:</label>
+          <input type="number" id="inputCellSize"min={2} defaultValue={10} />
+          <button id="updateSizeBtn">Actualizar Tamaño</button>
+        </div>
+        <br />
         <div className="juego-conway">
           <canvas id="gameCanvas" />
           <br /><br />
@@ -42,9 +52,9 @@ function Conway() {
         </div>
         <div className="inputs-reglas">
           <label htmlFor="ruleB">B</label>
-          <input type="number" id="ruleB" defaultValue={3} />
+          <input className="rules" type="number" id="ruleB" defaultValue={3} />
           <label htmlFor="ruleS">/S</label>
-          <input type="number" id="ruleS" defaultValue={23} />
+          <input  className="rules"type="number" id="ruleS" defaultValue={23} />
         </div>
         <div className="contadores">
           <h3>Generaciones:<br /><span id="generationCounter">0</span></h3>

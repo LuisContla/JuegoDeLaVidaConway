@@ -36,6 +36,10 @@ button{
   gap: 2rem;
 }
 
+.inputCanvas{
+  
+}
+
 /* ---------- INPUTS TOGGLE ---------- */
 
 /* The switch - the box around the slider */
@@ -104,13 +108,13 @@ input:checked + .slider:before {
 /* ---------- Ocultar flechas de inputs de número ---------- */
 
 /* Chrome, Safari, Edge, Opera */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
+.rules::-webkit-outer-spin-button,
+.rules::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
 /* Firefox */
-input[type=number] {
+.rules[type=number] {
   -moz-appearance: textfield;
 }
