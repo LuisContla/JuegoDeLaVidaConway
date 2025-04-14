@@ -4,8 +4,8 @@ window.onload = function () {
 
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
-    const rows = 50, cols = 100;
-    const cellSize = 10;
+    const rows = 500, cols = 500;
+    const cellSize = 3;
     canvas.width = cols * cellSize;
     canvas.height = rows * cellSize;
 
