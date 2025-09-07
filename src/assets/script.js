@@ -1,6 +1,7 @@
 window.onload = function () {
 
     // ---------- CONFIGURANDO EL CANVAS ---------- 
+    /// [CONFIGURANDO EL CANVAS]
 
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
@@ -10,6 +11,7 @@ window.onload = function () {
     canvas.height = rows * cellSize;
 
     // ---------- VARIABLES PRINCIPALES ---------- 
+    /// [VARIABLES PRINCIPALES]
 
     let speed = parseInt(document.getElementById("speedInput").value); // Velocidad inicial desde el input
     let grid = Array.from({ length: rows }, () => Array(cols).fill(0)); // Matriz para almacenar el estado del juego
@@ -29,6 +31,7 @@ window.onload = function () {
     let ruleS = [2, 3]; // Reglas de supervivencia, por defecto S23
 
     // ---------- REFERENCIAS A BOTONES E INPUTS ---------- 
+    /// [REFERENCIAS A BOTONES E INPUTS]
 
     const toggleGameButton = document.getElementById("toggleGame");
     const generateRandomBtn = document.getElementById("generateRandomBtn");
@@ -43,8 +46,9 @@ window.onload = function () {
     const inputCellSize = document.getElementById("inputCellSize");
     const updateSizeBtn = document.getElementById("updateSizeBtn");
 
-    // ---------- DIBUJO DEL CANVAS ---------- 
-
+    // ---------- DIBUJO DEL CANVAS ----------
+    
+    /// [DIBUJO DEL CANVAS/Renderizar]
     function drawGrid() {
         // Leemos el valor actual de los colores
         const aliveColor = document.getElementById("celdaVivaColor").value;
@@ -62,6 +66,7 @@ window.onload = function () {
         }
     }
 
+    /// [DIBUJO DEL CANVAS/Actualizar Tamaño]
     // Función para actualizar el tamaño del canvas
     function updateCanvasSize() {
         // Obtener las nuevas dimensiones del canvas desde los inputs
@@ -80,8 +85,8 @@ window.onload = function () {
         drawGrid();
     }
 
-
-    // ---------- FUNCIONALIDADES DE CONTROL ---------- 
+    // ---------- FUNCIONALIDADES DE CONTROL ----------
+    /// [FUNCIONALIDADES DE CONTROL]
 
     // Función para alternar entre "Iniciar" y "Pausar"
     function toggleGame() {
@@ -143,8 +148,9 @@ window.onload = function () {
         drawGrid();
     }
 
-    // ---------- FUNCIONALIDADES PRINCIPALES ---------- 
+    // ---------- FUNCIONALIDADES PRINCIPALES ----------
 
+    /// [FUNCIONALIDADES PRINCIPALES/Generar Aleatorio]
     // Genera una cuadrícula completamente aleatoria, reinicia el contador y pausa el juego
     function generateRandomGrid() {
         stopGame();
@@ -167,6 +173,7 @@ window.onload = function () {
         updateStatistics(aliveCount);
     }
 
+    /// [FUNCIONALIDADES PRINCIPALES/Agregar Aleatorio]
     // Añade nuevas células vivas sin afectar las ya existentes, y pausa el juego
     function addRandomCells() {
         for (let y = 0; y < rows; y++) {
@@ -184,6 +191,7 @@ window.onload = function () {
         updateStatistics(aliveCount);
     }
 
+    /// [FUNCIONALIDADES PRINCIPALES/Siguiete Generación]
     // Calcula la siguiente generación basada en las reglas del Juego de la Vida
     function getNextGeneration() {
         let newGrid = grid.map(arr => [...arr]); // Copia la matriz actual
@@ -238,6 +246,7 @@ window.onload = function () {
         updateStatistics(); // Actualiza las estadísticas
     }
 
+    /// [FUNCIONALIDADES PRINCIPALES/Toroidal]
     // Evento para el toggle del modo toroidal
     document.querySelector("input[type='checkbox']").addEventListener("change", function () {
         // Pausamos el juego cuando se cambia el estado del toggle
@@ -262,6 +271,7 @@ window.onload = function () {
         drawGrid(); // Dibuja la cuadrícula con las celdas tal como están
     });
 
+    /// [FUNCIONALIDADES PRINCIPALES/Actualizar Juego]
     // Ejecuta la actualización del juego en cada iteración
     function update() {
         getNextGeneration(); // Calcula la siguiente generación
@@ -275,6 +285,7 @@ window.onload = function () {
         updateStatistics(aliveCount);
     }
 
+    /// [FUNCIONALIDADES PRINCIPALES/Reglas B-S]
     // Actualizamos las reglas B/S desde los inputs
     function updateRules() {
         const ruleBValue = document.getElementById("ruleB").value;
@@ -298,7 +309,7 @@ window.onload = function () {
 
     // ---------- FUNCIONALIDADES DE GENERACIONES ---------- 
 
-    // Retroceder una generación
+    /// [FUNCIONALIDADES DE GENERACIONES/Retroceder una Generación]
     function previousGeneration() {
         if (historyIndex > 0) {
             historyIndex--; // Retrocedemos en el historial
@@ -319,7 +330,7 @@ window.onload = function () {
         }
     }
 
-    // Avanzar una generación
+    /// [FUNCIONALIDADES DE GENERACIONES/Avanzar una Generación]
     function nextGeneration() {
         if (historyIndex < history.length - 1) {
             historyIndex++; // Avanzamos en el historial
@@ -351,7 +362,7 @@ window.onload = function () {
         }
     }
 
-    // Función para guardar el estado de la generación en el historial
+    /// [FUNCIONALIDADES DE GENERACIONES/Guardar en Historial]
     function saveToHistory() {
         if (historyIndex < history.length - 1) {
             // Si estamos en medio del historial, eliminamos las generaciones "futuras"
@@ -375,6 +386,7 @@ window.onload = function () {
     }
 
     // ---------- CONTROL DE VELOCIDADES ---------- 
+    /// [CONTROL DE VELOCIDADES]
 
     // Cambia la velocidad asegurando que esté entre 50 y 500 ms
     function changeSpeed(newSpeed) {
@@ -388,6 +400,7 @@ window.onload = function () {
     }
 
     // ---------- ESTADÍSTICAS ---------- 
+    /// [ESTADÍSTICAS]
 
     // Función para contar las celdas vivas
     function countAliveCells() {
@@ -441,6 +454,7 @@ window.onload = function () {
     }
 
     // ---------- PERSONALIZACIÓN DE COLORES ---------- 
+    /// [PERSONALIZACIÓN DE COLORES]
 
     // Función para actualizar los colores de las celdas inmediatamente
     function updateCellColors() {
@@ -454,6 +468,7 @@ window.onload = function () {
     }
 
     // ---------- EXPORTACIÓN E IMPORTACIÓN DE ARCHIVOS ---------- 
+    /// [EXPORTACIÓN E IMPORTACIÓN DE ARCHIVOS]
 
     // Exporta el estado del canvas a un archivo JSON
     function exportCanvas() {
@@ -537,6 +552,7 @@ window.onload = function () {
     });
 
     // ---------- EVENT LISTENERS ---------- 
+    /// [EVENT LISTENERS]
 
     // Botones
     toggleGameButton.addEventListener("click", toggleGame);
@@ -558,6 +574,7 @@ window.onload = function () {
     celdaMuertaColorInput.addEventListener("input", updateCellColors);
 
     // ---------- DIBUJO INTERACTIVO DEL CANVAS ---------- 
+    /// [DIBUJO INTERACTIVO DEL CANVAS]
 
     canvas.addEventListener("mousedown", function (event) {
         if (running) {
@@ -603,6 +620,7 @@ window.onload = function () {
     });
 
     // ---------- DUBUJAR CUADRÍCULA ---------- 
+    /// [DIBUJAR CUADRÍCULA]
 
     drawGrid();
 };

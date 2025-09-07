@@ -61,7 +61,7 @@ function Conway() {
           <h3>Celdas Vivas:<br /><span id="aliveCounter">0</span></h3>
           <h3>Densidad Poblacional:<br /><span id="populationDensity">0</span></h3>
           <h3>Logaritmo Base 10:<br /><span id="logBase10">0</span></h3>
-          <h3> Media de Celdas Vivas:<br /><span id="meanAliveCells">0</span></h3>
+          <h3>Media de Celdas Vivas:<br /><span id="meanAliveCells">0</span></h3>
           <h3>Varianza:<br /><span id="variance">0</span></h3>
           <h3>Total de Celdas Vivas:<br /><span id="totalAliveCells">0</span></h3>
         </div>
