@@ -1,12 +1,12 @@
-window.onload = function () {
+export function initConway() {
 
     // ---------- CONFIGURANDO EL CANVAS ---------- 
     /// [CONFIGURANDO EL CANVAS]
 
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
-    let rows = 500, cols = 500;
-    let cellSize = 3;
+    let rows = 50, cols = 50;
+    let cellSize = 10;
     canvas.width = cols * cellSize;
     canvas.height = rows * cellSize;
 
@@ -47,7 +47,7 @@ window.onload = function () {
     const updateSizeBtn = document.getElementById("updateSizeBtn");
 
     // ---------- DIBUJO DEL CANVAS ----------
-    
+
     /// [DIBUJO DEL CANVAS/Renderizar]
     function drawGrid() {
         // Leemos el valor actual de los colores
@@ -623,4 +623,4 @@ window.onload = function () {
     /// [DIBUJAR CUADRÍCULA]
 
     drawGrid();
-};
+}
